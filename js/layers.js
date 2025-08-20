@@ -445,6 +445,13 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
    tooltip:"与其他音游联动15次及以上！",
    textStyle: {'color': '#3b4f7c'},
    },
+  121: {
+   name: "真皆传<br>🏆",
+   done() {return player.j.pdqja.lte(185)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"通过185ms判定区间挑战<br>奖励：解锁第14个层级",
+   textStyle: {'color': '#e41f23'},
+   },
        
        1001: {
      name: "隐藏成就1",
@@ -697,6 +704,15 @@ QqQ="a";banana="b";Liu="c";fufu=['d'];Loader="e";yszqzls="f";yyyxs="g";Genshin="
     canClick() {return true},
     unlocked() {return true},
     style: {'height':'200px','width':'200px'},
+        },   
+    51: {
+    title(){return "复制原版通关存档"},
+    display: "点击复制0.59通关存档",
+   canClick() {return true},
+    onClick() { navigator.clipboard.writeText(`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`)
+        .then(() => alert('复制成功'))
+      .catch(err => alert('复制失败')); },
+     unlocked(){return true},
         },
    },
 })//Test
@@ -1666,6 +1682,7 @@ if(tmp.a.drEff1.gte(1)) sna=sna.times(tmp.a.drEff1)
 if(hasUpgrade('sp',23)) sna=sna.times(upgradeEffect('sp',23))
 if(hasUpgrade('sp',26)) sna=sna.times(2)
 if(hasMilestone('r',0)) sna=sna.times(2)
+if(hasUpgrade('dx',12))sna=sna.pow(upgradeEffect('dx',12))
 return sna
     },
     snsCal() {
@@ -1688,6 +1705,7 @@ eff=n(1e4).pow(sn.pow(0.5))
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff.log10().gte(1000)) eff = n(10).pow(eff.log10().sub(1000).pow(0.8).add(1000))//sc
 if(eff.log10().gte(5000)) eff = n(10).pow(eff.log10().sub(5000).pow(0.5).add(5000))//sc2
+if(eff.log10().gte(150000)) eff = n(10).pow(eff.log10().sub(150000).pow(0.1).add(150000))//sc3
 if(!hasAchievement('A',74)) return n(1)
 return eff},
     snEff3() {
@@ -1704,6 +1722,7 @@ eff=n('1e1000').pow(sn.pow(0.4).div(10))
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff.log10().gte(10000)) eff = n(10).pow(eff.log10().sub(10000).pow(0.8).add(10000))//sc
 if(eff.log10().gte(100000)) eff = n(10).pow(eff.log10().sub(100000).pow(0.5).add(100000))//sc2
+if(eff.log10().gte(1000000)) eff = n(10).pow(eff.log10().sub(1000000).pow(0.5).add(1000000))//sc3
 if(!hasUpgrade('ch',54)) return n(1)
 return eff},
     snEff5() {
@@ -1711,6 +1730,7 @@ return eff},
 eff=sn.log(100).div(3).pow(0.5).sub(0.75).max(0)
 if(tmp.a.drEff2.gte(1)) eff=eff.mul(tmp.a.drEff2)
 if(eff>1) eff = eff.pow(0.5)//sc
+if(eff.gte(1.5))eff=eff.div(1.5).pow(0.05).mul(1.5) //sc2
 if(!hasUpgrade('sp',22)) return n(1)
 return eff
     },
@@ -3036,6 +3056,7 @@ addLayer("m", {
     unlocked() {return hasMilestone('c',7)}, },
     13:{ title: "Lanota: 黄道、知希朋友と紡ぎありく",
     description:"基于魔王曲增益Cytus力量获取量",
+    tooltip:"已过时，目前是第八章的Immaculate",
     cost: n(15),
     effect() {
         return n(1.4).pow(player.m.points)},
@@ -3052,6 +3073,7 @@ addLayer("m", {
     15:{ 
      title: "Rotaeno: Galactic Warzone",
     description:"基于魔王曲增益旋律和Milthm维度",
+    tooltip:"已过时，目前是第三章的脆肚",
     cost: n(736),
     effect() {
         return player.m.points.max(1).log(2).pow(0.5).max(1)},
@@ -3070,6 +3092,18 @@ addLayer("m", {
     },
  effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"×" },
     unlocked() {return hasUpgrade('m',15)}, },
+    17:{ 
+     title: "maimai DX: Xaleid◆scopiX",
+    description:"基于maiMILE增益填充Notes获取",
+    cost: n(6e4),
+    tooltip:"最新最热",
+    effect() {
+        let eff =player.dx.points.add(10).log10().div(20).add(0.95)
+        if(eff.gte(1.5)) eff = eff.div(1.5).pow(0.2).mul(1.5)//sc
+     return eff
+    },
+ effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) },
+    unlocked() {return gba('ri',16).gte(3)}, },
    },
     milestones: {
     0: {

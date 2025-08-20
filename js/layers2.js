@@ -160,6 +160,7 @@ return mult
   if(hasUpgrade('ri',13)) a=a.pow(1.1)
   if(hasUpgrade('ri',15)) a=a.pow(upgradeEffect('ri',15))
   a=a.pow(tmp.j.pdqja8)
+  if(hasUpgrade('m',17)) a=a.pow(upgradeEffect('m',17))
   
   if(a.log10().gte(2e7)) a = n(10).pow(a.log10().sub(2e7).pow(tmp.r.notesSc).add(2e7))//sc
   return a
@@ -268,6 +269,7 @@ return mult
    cost() {
    let b=gba(this.layer, this.id)
    cost=this.a().pow(b)
+   if(hasUpgrade('dx',11))cost=cost.pow(upgradeEffect('dx',11))
       return cost
       },
       title(){return "Rot点数 I"},
@@ -294,7 +296,9 @@ return mult
    return a
       },
       cost() {
-   return this.a().mul(n("1e50000").pow(gba(this.layer, this.id).pow(1.25))) },
+   let cost=this.a().mul(n("1e50000").pow(gba(this.layer, this.id).pow(1.25)))
+   if(hasUpgrade('dx',11))cost=cost.pow(upgradeEffect('dx',11))
+      return cost },
       title(){return "Rot点数 II"},
       display() { return "你可以用Notes购买Rot点数购买“升级”<br>价格："+format(this.cost())+" Notes<br>数量："+format(gba(this.layer, this.id))},
       canAfford() { return player.points.gte(this.cost()) },
@@ -317,7 +321,10 @@ return mult
    if(hasUpgrade('sp',53)) a=n(3)
    if(hasUpgrade('ri',32)) a=n(8)
    return a},
-      cost() { return n(10).pow(gba(this.layer,this.id).div(this.a()).add(20).pow(2)) },
+      cost() { let cost=n(10).pow(gba(this.layer,this.id).div(this.a()).add(20).pow(2))
+   if(hasUpgrade('dx',11))cost=cost.pow(upgradeEffect('dx',11))
+      return cost
+          },
       title(){return "Rot点数 III"},
       display() { return "你可以用Milthm购买Rot点数购买“升级”<br>价格："+format(this.cost())+" Milthm<br>数量："+format(gba(this.layer, this.id))},
       canAfford() { return player.mi.points.gte(this.cost()) },
@@ -2720,6 +2727,8 @@ colBox: {
      mult=mult.mul(tmp.e.effect[1])
      return mult
     },
+    softcap:n(1e41),
+    softcapPower:n(0.1),
     branches(){return ['r','mi','j']},
     row: 5, 
     layerShown(){ return hasUpgrade('j',31)||hasAchievement('A',111)},
@@ -2733,7 +2742,7 @@ colBox: {
      let a=n(1)
      let b=player.ri.songs
      if(gba('ri',12).gte(1)) a=a.add(b.div(400))
-     return a.max(1)
+     return a.max(1).min(2) //平衡，devSpeed是Number的，如果爆了就变成nan了
     },
     phi1() {
      let a=n(16.3)
@@ -2792,6 +2801,10 @@ colBox: {
      if(gba('ri',15).gte(5)) a=n(1.79e308)
      return a.max(13)
     },
+    mai1() {
+     let a=n(2).pow(gba('ri',16).pow(1.5))
+     return a
+    },
     ric1() {
      let a=challengeCompletions('ri',11)
      if(a==0) return n(300)
@@ -2816,7 +2829,7 @@ colBox: {
      }
     },
     songs() {
-     let songs=n(player.ri.upgrades.length).add(buyableEffect('ri',11)).add(buyableEffect('ri',12)).add(buyableEffect('ri',13)).add(buyableEffect('ri',14)).add(buyableEffect('ri',15))
+     let songs=n(player.ri.upgrades.length).add(buyableEffect('ri',11)).add(buyableEffect('ri',12)).add(buyableEffect('ri',13)).add(buyableEffect('ri',14)).add(buyableEffect('ri',15)).add(buyableEffect('ri',16))
      songs=songs.add(player.ri.songsGenerated)
      if(hasUpgrade('e',23)) songs=songs.mul(upgradeEffect('e',23))
      return songs
@@ -2926,6 +2939,12 @@ unlocked(){return hasUpgrade('ri',17)}
      ["display-text",
      function() {if(gba('ri',15).gte(1)) return '1.延后PTT上限至'+format(tmp.ri.arc1)},
      {"color": "#ffffff", "font-size": "20px", "font-family": "Comic Sans MS"}],//arc1
+     "blank",["display-text",
+     function() {if(gba('ri',16).gte(1)) return 'maimai DX联动效果:'},
+     {"color": "#ffffff", "font-size": "24px", "font-family": "Comic Sans MS"}],//mai
+     ["display-text",
+     function() {if(gba('ri',16).gte(1)) return '1.maiMILE获取×'+format(tmp.ri.mai1)},
+     {"color": "#ffffff", "font-size": "20px", "font-family": "Comic Sans MS"}],//mai1
     ],
 unlocked(){return hasUpgrade('ri',17)}
     },
@@ -3345,6 +3364,34 @@ unlocked(){return hasUpgrade('ri',17)}
      purchaseLimit() {return n(5)},
      style: {'height':'150px'},
 			},
+ 16: {
+				title: "maimai DX联动",
+				cost(x=player[this.layer].buyables[this.id]) {
+				 let cost=n(5e45).mul(n(2).pow(x))
+				 if(x==3) cost=n(2e308)
+    return cost
+      },
+				display() { // Everything else displayed in the buyable button after the title
+    let data = tmp[this.layer].buyables[this.id]
+    return "需要 " + format(data.cost) + " Dot"+"<br>联动次数: " + format(player[this.layer].buyables[this.id]) + "<br>你从maimai DX获得了" +format(this.effect()) +"首歌曲！"
+      },
+   unlocked() { return hasMilestone('dx',1)}, 
+   effect(x=player[this.layer].buyables[this.id]) {
+    let eff
+    if(x==0) eff=0
+    if(x==1) eff=3
+    if(x==2) eff=5
+    if(x==3) eff=7
+    return eff
+   },
+   canAfford() {
+   return player.ri.points.gte(tmp[this.layer].buyables[this.id].cost)},
+    buy() { 
+    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+      },
+     purchaseLimit() {return n(3)},
+     style: {'height':'150px'},
+			},
  21: {
 				title: "曲库生成器",
 				cost(x=player[this.layer].buyables[this.id]) {
@@ -3562,9 +3609,9 @@ asBox: {
       if(tmp.e.clickables[i].unlocked&&player.e.assigned[i-11].lt(3e6)) player.e.assigned[i-11]=player.e.assigned[i-11].add(exp)
       }
      }
-     player.e.points=player.e.points.min(2.5e5)
-     player.ri.points=player.ri.points.min(2.5e46)
-     player.ri.total=player.ri.total.min(2.5e46)
+     player.e.points=player.e.points.min(hasMilestone('dx',0)?3e5:2.5e5)
+     if(!hasUpgrade('dx',13))player.ri.points=player.ri.points.min(2.5e46)
+     if(!hasUpgrade('dx',13))player.ri.total=player.ri.total.min(2.5e46)
       for(i=0;i<=6;i++) {
       if(player.e.assigned[i].gte(3e6)) player.e.assigned[i]=n(3e6)
       }
@@ -3722,7 +3769,7 @@ unlocked(){return hasUpgrade('e',17)}
     milestones: {
     0: {
      requirementDescription: "累计 1 经验",
-     effectDescription: "Ri层保留相关里程碑全部应用于本层",
+     effectDescription: "Ri层保留相关里程碑全部应用于第六行全部层级",
      done() { return player.e.points.gte(1) }
     },
     1: {
@@ -3811,7 +3858,7 @@ unlocked(){return hasUpgrade('e',17)}
     },
     13: {
      requirementDescription: "一次重置获得超过17经验 并且 通过200ms判定区间挑战",
-     effectDescription() {return "恭喜通关！"},
+     effectDescription() {return "你可以看看第12行成就了"},
      unlocked() {return hasMilestone('e',12)},
      done() { return player.e.bestOnce.gte(17)&&player.j.pdqja.lte(200)}
     },
@@ -4030,3 +4077,129 @@ unlocked(){return hasUpgrade('e',17)}
      },
     },
 })//Experiences
+addLayer("dx", {
+  infoboxes: {
+ introBox: {
+  title: "层级14--maimai DX",
+  body(){return "欢迎来到第14层，maimai DX！此层级会根据曲包的数量重置以获得maiMILE，且保留前五行进度！后续还会有DX Rating等系统哦"},
+        },
+ upgBox: {
+  title: "maimai DX升级",
+  body(){return "这里是maimai DX升级，其实还是没啥好说的"},
+        },
+ ratingBox: {
+  title: "DX Rating",
+  body(){return "和PTT、RKS类似，DX Rating是maimai DX中的游戏实力衡量标准，有了越多的DX Rating，就会给其他资源一些增益，不过DX Rating是有上限的，接下来可以解锁更多和DX Rating相关的内容"},
+        },
+ kaleidxBox: {
+  title: "KALEIDXSCOPE",
+  body(){return "..."},
+        },
+},
+    name: "maimai", // This is optional, only used in a few places, If absent it just uses the layer main-display
+    symbol: "DX", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: n(0),
+    }},
+    branches(){return ['r','mi','j']},
+     color: "#dede00",
+     nodeStyle() {return {
+            "background": ((((player.dx.unlocked||canReset("dx"))))?("linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)"):"#bf8f8f") ,
+        }},
+        componentStyles: {
+            "prestige-button"() {return { "background": (canReset("dx"))?("linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)"):"#bf8f8f" }},
+        },
+    requires: n(196000), // Can be a function that takes requirement increases into account
+    resource: "maiMILE", // Name of prestige currency
+    baseResource: "曲包", // Name of resource prestige is based on
+    baseAmount() {return player.sp.points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 6,
+    layerShown() { return hasAchievement('A',121)},
+    // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+    //sgainmult//
+        mult = n(1)
+     mult=mult.mul(tmp.ri.mai1)
+        return mult
+    },
+    gainExp() { //sgainexp
+      exp= n(1)
+      return exp
+    },
+    directMult() { //sdirectmult
+        mult = n(1)
+        return mult
+    },
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "d", description: "D: Reset for maimai DX", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    tabFormat: {
+   "Milestones": {
+        content: [ ["infobox","introBox"],
+   "main-display",
+    "prestige-button",
+    "resource-display","milestones",
+
+],
+    },
+   "Upgrades": {
+        content: [ ["infobox","upgBox"],
+   "main-display",
+    "prestige-button",
+    "resource-display","upgrades",
+
+],
+    },},
+  softcap:n ("ee999999"),
+  softcapPower:n(1),
+    update(diff) {
+     
+	},
+      milestones: {
+    0: {
+     requirementDescription: "累计 1 maiMILE",
+     effectDescription: "经验上限延后 1.2 倍",
+     done() { return player.dx.points.gte(1) }
+    },
+    1: {
+     requirementDescription: "累计 50 maiMILE 并且 通过182ms判定区间挑战",
+     effectDescription: "解锁Rizline的maimai DX联动",
+     done() { return player.dx.total.gte(50)&&player.j.pdqja.lte(182) }
+    },
+    2: {
+     requirementDescription: "累计 2000 maiMILE",
+     effectDescription: "解锁maimai DX升级（注意：Dot上限为2.5e46）",
+     done() { return player.dx.total.gte(2000) }
+    },
+},
+      upgrades: {
+    11:{ title: "要开始了哟~",
+         description: "3个Rot点数可购买的价格基于maiMILE而降低",
+         cost: n(2000),
+         effect() { 
+             let eff=n(0.98).pow(player.dx.points.add(1).log10().pow(0.75))
+             if(eff.lte(0.6))eff=eff.div(0.6).pow(0.5).mul(0.6) //sc
+             if(eff.lte(0.4))eff=eff.div(0.4).pow(0.1).mul(0.4) //sc2
+             return eff
+         },
+     effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, },
+    12:{ title: "加入游戏！",
+         description: "基于maiMILE提升蛇获取",
+         cost: n(3000),
+         effect() { 
+             let eff=player.dx.points.add(10).log10().mul(0.3).add(0.7)
+             if(eff.gte(2.5))eff=eff.div(2.5).pow(0.15).mul(2.5) //sc
+             return eff
+         },
+     effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, },
+    13:{ title: "有新的旅行伙伴加入哦~",
+         description: "Dot不再有上限，但获取量被严重软上限",
+         cost: n(4000), },
+},
+    buyables: {
+},
+})//maimai DX

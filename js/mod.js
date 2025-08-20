@@ -1,6 +1,6 @@
 let modInfo = {
 	name:"音乐游戏树",
-	id: "Rhythm Game",
+	id: "trgt-mod-svnhidgwehvjwfioiojfhwr",
 	author: "QqQe308",
 	pointsName: "Notes",
 	modFiles: ["layers.js", "layers2.js", "tree.js"],
@@ -11,15 +11,15 @@ let modInfo = {
 }
 // Set your version in num and name
 let VERSION = {
-	num: "0.59",
-	name: "Rebalance II",
+	num: "0.6",
+	name: "Maimai DX",
 }
 
-let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新！<br>当前结局：e1.213e7 Notes，下一个更新:更多重平衡！`
+let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新！<br>当前结局：ee10 Notes，下一个更新:我也不知道！`
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte('e1.213e7')
+	return player.points.gte('ee10')
 	//return false
 }
 
@@ -34,10 +34,11 @@ var displayThings = [
    if(gcs('S',14)) b=b+"<br>课题力量: "+format(player.ch.enp)
    if(gcs('S',15)) b=b+"<br>填充Notes: "+format(player.r.notes)
    if(gcs('S',16)) b=b+"<br>游玩时长: "+formatTime(player.timeplayed)
-   let a= "v0.59游戏结局: e1.213e7 Notes！"
+   let a= "该版本为MOD，非原作版本<br>原作地址：https://qqqe308.github.io/The-Rhythm-Game-Tree/<br>如果你来这只是为了玩mod的，那么你可以在T层下载并导入原版通关存档<br>v0.6游戏结局: ee10 Notes (我猜)"
    if(inChallenge('r',12)&&player.devSpeed.eq(0)) a=a+"<br>你需要在Rot升级树里选择升级，并且点击升级12确定以开始挑战！"
   if(isEndgame()) a=a+"<br>已达到该版本结局！"
   if(getPointGen().gte(player.pointSoftcapStart.pow(0.9))) a=a+"<br>Notes获取量在"+format(player.pointSoftcapStart)+"达到软上限！<br>软上限效果:超过部分^"+format(player.pointSoftcapPower,3)
+  if(getPointGen().gte(player.pointOverflowStart.pow(0.9))) a=a+"<br>由于Notes获取量在"+format(player.pointOverflowStart)+"的溢出，Note获取量开"+format(player.overflowPower,3)+"次根"
   a=a+"<br>音乐游戏树一周年快乐！"
    return a+b
   }
@@ -128,7 +129,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-return !player.points.gte('e1.213e7')
+return !player.points.gte('ee10')
 //return true
 }
 
@@ -206,8 +207,13 @@ if(inChallenge('ri',12)) gain=n(10).pow(gain.max(10).log10().pow(n(0.1).pow(clic
 
 if(gain.gte(player.pointSoftcapStart)) gain=gain.div(player.pointSoftcapStart).pow(player.pointSoftcapPower).mul(player.pointSoftcapStart)
 
+let gainPreOverflow=gain
 
-if(player.devSpeed.neq(0)) gain=gain.min(n('e1.213e7').div(player.devSpeed))
+if(gain.gte(player.pointOverflowStart)) gain=n(10).pow(gain.div(player.pointOverflowStart.log10()).pow(player.pointOverflowPower).mul(player.pointOverflowStart.log10()))
+
+player.overflowPower=gainPreOverflow.max(1.0001).log(gain.max(1.0001))
+
+if(player.devSpeed.neq(0)) gain=gain.min(n('ee10').div(player.devSpeed))
 if(inChallenge('r',13))gain= gain.min(player.mi.points)
 
 	return gain
@@ -218,14 +224,21 @@ function pointSoftcapPower() {
  if(hasUpgrade('e',27)) power=buyableEffect('e',13)
  return power
 }
+function pointOverflowPower() {
+ let power=n(0.8)
+ return power
+}
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+overflowPower:n(1),
  devSpeed:n(1),
  timePlayed:n(0),//游戏时间
  timeplayed:n(0),//现实时间
  pointSoftcapStart:n("ee7"),//点数软上限起始点
- pointSoftcapPower:n(0.25),//点数软上限力量
+	pointSoftcapPower: n(0.25),//点数软上限力量
+	pointOverflowStart: n("ee10"),//点数溢出起始点
+	pointOverflowPower: n(0.8),//点数溢出力量
  shitDown:false,//对于手机版玩家是否按下Shift的Qol
 }}
  var QqQ="QqQe308"
@@ -238,7 +251,10 @@ function addedPlayerData() { return {
  var Genshin="启动！" 
  var Phigros="Phigros什么时候更新急急急" 
  var long2024="龙年马上要到了！祝大家新年龙腾虎跃，龙飞凤舞，龙批一个，事业有成，学业顺利，身体健康，财源滚滚，音游全AP，考试全满分，工作全加薪，玩树全通关，再次献上音乐游戏树全体作者（共1人）的真挚祝福！！！！！！！！！！（已经八月份了，我觉得这个彩蛋完全没有意义）" 
- var QqQe308="我是QqQe308，v我50更新音乐游戏树" 
+var QqQe308 = "我是QqQe308，v我50更新音乐游戏树" 
+var ismod = true
+var ischeat = false
+
 //彩蛋区
 
 
