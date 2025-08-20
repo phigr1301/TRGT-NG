@@ -4166,22 +4166,22 @@ addLayer("dx", {
      done() { return player.dx.points.gte(1) }
     },
     1: {
-     requirementDescription: "累计 50 maiMILE 并且 通过182ms判定区间挑战",
+     requirementDescription: "累计 20 maiMILE 并且 通过182ms判定区间挑战",
      effectDescription: "解锁Rizline的maimai DX联动",
-     done() { return player.dx.total.gte(50)&&player.j.pdqja.lte(182) }
+     done() { return player.dx.total.gte(20)&&player.j.pdqja.lte(182) }
     },
     2: {
-     requirementDescription: "累计 2000 maiMILE",
+     requirementDescription: "累计 1000 maiMILE",
      effectDescription: "解锁maimai DX升级（注意：Dot上限为2.5e46）",
-     done() { return player.dx.total.gte(2000) }
+     done() { return player.dx.total.gte(1000) }
     },
 },
       upgrades: {
     11:{ title: "要开始了哟~",
          description: "3个Rot点数可购买的价格基于maiMILE而降低",
-         cost: n(2000),
+         cost: n(1000),
          effect() { 
-             let eff=n(0.98).pow(player.dx.points.add(1).log10().pow(0.75))
+             let eff=n(0.96).pow(player.dx.points.add(1).log10().pow(0.75))
              if(eff.lte(0.6))eff=eff.div(0.6).pow(0.5).mul(0.6) //sc
              if(eff.lte(0.4))eff=eff.div(0.4).pow(0.1).mul(0.4) //sc2
              return eff
@@ -4189,7 +4189,7 @@ addLayer("dx", {
      effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, },
     12:{ title: "加入游戏！",
          description: "基于maiMILE提升蛇获取",
-         cost: n(3000),
+         cost: n(1500),
          effect() { 
              let eff=player.dx.points.add(10).log10().mul(0.3).add(0.7)
              if(eff.gte(2.5))eff=eff.div(2.5).pow(0.15).mul(2.5) //sc
@@ -4198,7 +4198,7 @@ addLayer("dx", {
      effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, },
     13:{ title: "有新的旅行伙伴加入哦~",
          description: "Dot不再有上限，但获取量被严重软上限",
-         cost: n(4000), },
+         cost: n(3000), },
 },
     buyables: {
 },
