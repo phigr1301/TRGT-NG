@@ -41,6 +41,7 @@ chalBox: {
     type: "normal", 
     exponent: 0.025, 
     gainMult() { //rgainmult//
+        if(inChallenge('ri',21))return n(0)
      mult = n(1)
      if (gcs("r",42)==1) mult = mult.times(clickableEffect("r", 42))
      if (gcs("r",52)==1) mult = mult.times(clickableEffect("r", 52))
@@ -3513,6 +3514,32 @@ unlocked(){return hasUpgrade('ri',17)}
      canComplete: function() {
    return player.points.gte(this.req())},
      },
+     21: {
+     name: "RiC3",
+     challengeDescription(){
+   return "全局速率锁定为0.1，你无法获取旋律，蛇、龙、Phidata没有效果，Note获取指数^0.65<br>完成次数:"+challengeCompletions(this.layer,this.id)+"/5"},
+   req() {let a=challengeCompletions('ri',21)
+    if(a==0) return n("1e24900")
+    if(a==1) return n(1e309)
+    if(a==2) return n(1)
+    if(a==3) return n(1)
+    if(a==4) return n(1)
+    return n(2e308)
+   },
+     goalDescription(){return format(this.req())+" Notes"},
+     rewardDescription(){
+      return "曲包获取指数×"+format(this.rewardEffect(),3)+"，每次完成解锁一个maimai DX升级"
+     },
+     rewardEffect() {
+      let eff=n(challengeCompletions('ri',21)).pow(0.75).div(100).add(1)
+      return eff
+     },
+     unlocked(){return hasUpgrade('dx',16)},
+     completionLimit(){
+   return n(5)},
+     canComplete: function() {
+   return player.points.gte(this.req())},
+     },
     },
 })//Rizline
 addLayer("e", {
@@ -4093,7 +4120,7 @@ addLayer("dx", {
         },
  kaleidxBox: {
   title: "KALEIDXSCOPE",
-  body(){return "..."},
+  body(){return "就是maimai DX挑战啦...在maimai DX挑战中，你将被困在50ms判定区间挑战中，旋律获取量被开十次根，同时部分挑战还有额外的效果，你可以根据挑战中的Note数量获取达成率，达成率上限为101.0000%"},
         },
 },
     name: "maimai", // This is optional, only used in a few places, If absent it just uses the layer main-display
@@ -4102,6 +4129,9 @@ addLayer("dx", {
     startData() { return {
         unlocked: false,
 		points: n(0),
+        rating:n(0),
+        ratmax:n(1000),
+        ratmax2:n(1),
     }},
     branches(){return ['r','mi','j']},
      color: "#dede00",
@@ -4153,6 +4183,35 @@ addLayer("dx", {
     "resource-display","upgrades",
 
 ],
+    },
+   "DX Rating": {
+        content: [ ["infobox","ratingBox"],
+   "main-display",
+    "prestige-button",
+    "resource-display",
+    ["display-text",
+      function() {return '你有 ' + format(player.dx.rating) + ' DX Rating!'},
+     {"color": "#f3e823", "font-size": "20px", "font-family": "Comic Sans MS"}],
+    ["display-text",
+      function() {return '当前DX Rating上限： ' + format(player.dx.ratmax)},
+     {"color": "#f7f90f", "font-size": "15px", "font-family": "Comic Sans MS"}],
+    ["display-text",
+      function() {return '确切来说，你有 ' + player.dx.rating + ' DX Rating'+'<br>当前的Rating上限为 ' + player.dx.ratmax},
+     {"color": "#ffffff", "font-size": "9px", "font-family": "Comic Sans MS"}],
+    ["display-text",
+      function() {if(player.dx.ratmax.gte(16500)) return 'DX Rating在16500时达到硬上限！'},
+     {"color": "#ffffff", "font-size": "15px", "font-family": "Comic Sans MS"}],
+     "blank",['row',[['clickable',11],['clickable',12],['clickable',13]]],
+
+],
+unlocked(){return hasUpgrade('dx',14)},
+    },
+   "KALEIDXSCOPE": {
+        content: [ ["infobox","kaleidxBox"],
+   "main-display","challenges",
+
+],
+unlocked(){return false},
     },},
   softcap:n ("ee999999"),
   softcapPower:n(1),
@@ -4175,6 +4234,21 @@ addLayer("dx", {
      effectDescription: "解锁maimai DX升级（注意：Dot上限为2.5e46）",
      done() { return player.dx.total.gte(1000) }
     },
+    3: {
+     requirementDescription: "DX Rating达到2100",
+     effectDescription: "曲包获取指数×1.03",
+     done() { return player.dx.rating.gte(2100) }
+    },
+    4: {
+     requirementDescription: "DX Rating达到2200",
+     effectDescription: "Cyten获取×1e50",
+     done() { return player.dx.rating.gte(2200) }
+    },
+    5: {
+     requirementDescription: "通过168ms判定区间挑战",
+     effectDescription: "基于DX Rating和超过2000的Rot点数指数提升Notes获取，最高^1.2",
+     done() { return player.j.pdqja.lte(168) }
+    },
 },
       upgrades: {
     11:{ title: "要开始了哟~",
@@ -4193,13 +4267,71 @@ addLayer("dx", {
          effect() { 
              let eff=player.dx.points.add(10).log10().mul(0.3).add(0.7)
              if(eff.gte(2.5))eff=eff.div(2.5).pow(0.15).mul(2.5) //sc
+             if(eff.gte(4))eff=eff.div(4).pow(0.15).mul(4) //sc2
              return eff
          },
      effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) }, },
     13:{ title: "有新的旅行伙伴加入哦~",
          description: "Dot不再有上限，但获取量被严重软上限",
          cost: n(3000), },
+    14:{ title: "出发喽！",
+         description: "解锁DX Rating",
+         cost: n(4000), },
+    15:{ title: "可玩乐曲数增加！",
+         description: "Cytus力量可购买的折算削弱15%",
+         cost: n(10000),
+     unlocked(){return hasMilestone('dx',5)},},
+    16:{ title: "发现了新的区域哦~",
+         description: "解锁第三个Rizline挑战，RiC3",
+         tooltip:"<s>别问我为什么不是maimai挑战，问就是还早着呢</s>",
+         cost: n(20000),
+     unlocked(){return hasUpgrade('dx',15)},},
+    17:{ title: "",
+         description: "",
+         tooltip:"还没做呢",
+         cost: n(1e309),
+     unlocked(){return challengeCompletions('ri',21)>=1},},
 },
     buyables: {
 },
+    challenges: {
+},
+  clickables: {
+    11: {
+      title() {return "增加DX Rating"},
+      display() {return "点击或按住以增加DX Rating！"},
+      canClick() {return true},
+      onClick() {
+          let ratd=player.dx.rating.div(100)
+          let mxd=player.dx.ratmax.div(100)
+       let rat=n(10).pow(mxd.add(1)).log(2).div(n(10).pow(ratd.add(1)).log(2)).log(3).div(5).max(0)
+       player.dx.rating = player.dx.rating.add(rat.mul(100))
+      },
+      onHold() {
+       this.onClick()
+      },
+    },
+    12: {
+      title() {return "增加DX Rating上限"},
+      display() {return "点击或按住基于maiMILE增加DX Rating上限"},
+      canClick() {return true},
+      onClick() {
+       let ratmax=player.dx.points.add(1).log(10).add(1).pow(0.5).mul(1000).sub(player.dx.ratmax.mul(player.dx.ratmax2)).div(2).max(0)
+       player.dx.ratmax = player.dx.ratmax.add(ratmax).min(16500)
+      },
+      onHold() {
+       this.onClick()
+      },
+      unlocked() {return true}
+    },
+    13: {
+      title() {return "增加PTT上限2"},
+      display() {return "增加上一个可点击效果的上限（基于Phidata数量）<br>上限×"+format(n(1).div(player.a.pttMax2))+"<br>确切来说，×"+n(1).div(player.a.pttMax2)},
+      canClick() {return true},
+      onClick() {player.a.pttMax2 = player.a.pttMax2.sub(player.p.points.add(1).log(100).add(1).div(5).pow(0.5).mul(player.a.pttMax2.pow(10)).max(player.a.pttMax2.div(100)).sub(player.a.pttMax2.div(100)).min(player.a.pttMax2.mul(0.1)))},
+      onHold() {
+       this.onClick()},
+      unlocked() {return false}
+    },
+    },
 })//maimai DX

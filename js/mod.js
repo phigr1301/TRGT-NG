@@ -12,7 +12,7 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "0.6",
-	name: "Maimai DX",
+	name: "maimai DX",
 }
 
 let winText = `恭喜通关！你已经完成了你的音游之旅…吗？请期待下一个更新！<br>当前结局：ee10 Notes，下一个更新:我也不知道！`
@@ -45,6 +45,10 @@ var displayThings = [
 ]
 
 let changelog = `<h1>更新日志</h1><br>
+<h2>v0.6 maimai DX 2025/8/20-<br>
+<h3>- 添加一个层级：maimai DX<br>
+- 添加3个里程碑，1+3=4个升级，1个可购买<br>
+- 游戏结局：ee10 Notes<br><br>
 <h2>v0.59 Rebalance II 2024/8/26-2024/10/6<br>
 <h3>- 重平衡1Cyten前的游戏流程<br>
 <h3>- 为游戏添加了攻略(Pre-Cytus)<br>
@@ -188,6 +192,7 @@ if (hasUpgrade('ch', 27)) gain = gain.pow(1.05)
 if (hasUpgrade('sp', 27)) gain = gain.pow(1.001)
 if (hasAchievement('A', 65)) gain = gain.pow(1.0101)
 if(tmp.a.drEff4.gte(1)) gain=gain.pow(tmp.a.drEff4)
+if(hasMilestone('dx',5)&&player.r.rota.gte(2000))gain=gain.pow(player.r.rota.div(2000).pow(0.125).mul(player.dx.rating.add(10).log10().div(100).add(0.99)).max(1).min(1.2))
 
 if(inChallenge('p',12)){gain= gain.pow(0.1)}
 	if(hasChallenge('p',13)){gain = gain.pow(challengeEffect('p',13))}
@@ -204,6 +209,7 @@ if(inChallenge('c',14)&&!hasMilestone('r',0))gain= gain.pow(0.05)
 if(inChallenge('r',11))gain= gain.pow(0.1)
 if(gcs('j',11)==1) gain=gain.pow(tmp.j.pdqj1)
 if(inChallenge('ri',12)) gain=n(10).pow(gain.max(10).log10().pow(n(0.1).pow(clickableEffect('e',15)).min(0.4)))
+if(inChallenge('ri',21)) gain=n(10).pow(gain.max(10).log10().pow(0.65))
 
 if(gain.gte(player.pointSoftcapStart)) gain=gain.div(player.pointSoftcapStart).pow(player.pointSoftcapPower).mul(player.pointSoftcapStart)
 

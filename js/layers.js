@@ -48,6 +48,7 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
 	    if(isEndgame()) dev=n(0)
 	    
 	    dev=dev.pow(tmp.ri.riz2)
+        if(inChallenge('ri',21))dev=dev.min(0.1)
 	    return dev
 	   },
     achievementPopups: true,
@@ -451,6 +452,13 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
    onComplete(){player.A.ach=player.A.ach.add(1)},
    tooltip:"通过185ms判定区间挑战<br>奖励：解锁第14个层级",
    textStyle: {'color': '#e41f23'},
+   },
+  122: {
+   name: "绿框",
+   done() {return player.dx.rating.gte(2000)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"DX Rating达到2000！",
+   textStyle: {'color': '#7fff7f'},
    },
        
        1001: {
@@ -1181,9 +1189,11 @@ addLayer("s", {
         if (hasUpgrade('p',13)) mult = mult.times(1e15)
         if (hasUpgrade('p',24)) mult = mult.pow(1.2)
         if(hasChallenge('p',14)){mult = mult.pow(challengeEffect('p',14))}
+        if(!inChallenge('ri',21)){
        mult = mult.times(player['p'].points.add(1).pow(1).pow(player.m.points.add(1).pow(0.5)))
        if(hasUpgrade('p',11)) mult = mult.times(player['p'].points.add(1).pow(4).pow(player.m.points.add(1).pow(0.5)))
        if(hasUpgrade('p',31)) mult = mult.times(player['p'].points.add(1).pow(3).pow(player.m.points.add(1).pow(0.5)))
+       }
         if(hasChallenge('p',15)){mult = mult.pow(challengeEffect('p',15))}
         
         if(mult>1e160) mult = mult.times(mult.div(1e160).pow(-0.35))//sc1
@@ -1597,9 +1607,11 @@ addLayer("a", {
         mult=mult.times(buyableEffect('s',13))
         
         if(hasChallenge('p',14)){mult = mult.pow(challengeEffect('p',14))}
+        if(!inChallenge('ri',21)){
        mult = mult.times(player['p'].points.add(1).pow(1).pow(player.m.points.add(1).pow(0.5)))
        if(hasUpgrade('p',11)) mult = mult.times(player['p'].points.add(1).pow(4).pow(player.m.points.add(1).pow(0.5)))
        if(hasUpgrade('p',31)) mult = mult.times(player['p'].points.add(1).pow(3).pow(player.m.points.add(1).pow(0.5)))
+       }
         if(hasChallenge('p',15)){mult = mult.pow(challengeEffect('p',15))}
         if(hasUpgrade('a',26)){mult = mult.times(upgradeEffect('a',26))}
         if(buyableEffect('c',21)>1) mult = mult.times(buyableEffect('c',21))
@@ -1693,14 +1705,18 @@ return sna
       return sns
     },
     snEff1() {
+    if(inChallenge('ri',21))return n(1)
   sn=player.a.sn.max(1)
+  if(sn.gte(1e40))sn=sn.div(1e40).pow(0.3).mul(1e40)
 eff=sn.log(10).pow(2).add(1)
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff>25) eff = eff.sub(24).pow(0.5).add(24)//sc
 return eff
     },
     snEff2() {
+    if(inChallenge('ri',21))return n(1)
     sn=player.a.sn.max(1)
+  if(sn.gte(1e40))sn=sn.div(1e40).pow(0.3).mul(1e40)
 eff=n(1e4).pow(sn.pow(0.5))
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff.log10().gte(1000)) eff = n(10).pow(eff.log10().sub(1000).pow(0.8).add(1000))//sc
@@ -1709,7 +1725,9 @@ if(eff.log10().gte(150000)) eff = n(10).pow(eff.log10().sub(150000).pow(0.1).add
 if(!hasAchievement('A',74)) return n(1)
 return eff},
     snEff3() {
+    if(inChallenge('ri',21))return n(1)
   sn=player.a.sn.max(1)
+  if(sn.gte(1e40))sn=sn.div(1e40).pow(0.3).mul(1e40)
 eff=sn.log(100).pow(2.5).add(1)
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff>10) eff = eff.sub(9).pow(0.5).add(9)//sc
@@ -1717,7 +1735,9 @@ if(!hasUpgrade('sp',13)) return n(1)
 return eff
     },
     snEff4() {
+    if(inChallenge('ri',21))return n(1)
     sn=player.a.sn.max(1)
+  if(sn.gte(1e40))sn=sn.div(1e40).pow(0.3).mul(1e40)
 eff=n('1e1000').pow(sn.pow(0.4).div(10))
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff.log10().gte(10000)) eff = n(10).pow(eff.log10().sub(10000).pow(0.8).add(10000))//sc
@@ -1726,7 +1746,9 @@ if(eff.log10().gte(1000000)) eff = n(10).pow(eff.log10().sub(1000000).pow(0.5).a
 if(!hasUpgrade('ch',54)) return n(1)
 return eff},
     snEff5() {
+    if(inChallenge('ri',21))return n(0)
   sn=player.a.sn.max(1)
+  if(sn.gte(1e40))sn=sn.div(1e40).pow(0.3).mul(1e40)
 eff=sn.log(100).div(3).pow(0.5).sub(0.75).max(0)
 if(tmp.a.drEff2.gte(1)) eff=eff.mul(tmp.a.drEff2)
 if(eff>1) eff = eff.pow(0.5)//sc
@@ -1742,6 +1764,7 @@ return eff
       return dr
     },
     drEff1() {
+    if(inChallenge('ri',21))return n(1)
   dr=player.a.dr.max(1)
 eff=dr.add(1).log(10).add(1).pow(2)
 if(eff.gte(10)) eff = eff.sub(9).pow(0.5).add(9)//sc
@@ -1749,6 +1772,7 @@ if(!hasUpgrade('ch',57)) return n(1)
 return eff
     },
     drEff2() {
+    if(inChallenge('ri',21))return n(1)
   dr=player.a.dr.max(1)
 eff=dr.add(1).log(10).add(1).pow(0.5).sub(1).div(10).add(1)
 if(gcs("r",91)==1) eff = eff.pow(clickableEffect("r", 91))
@@ -1756,18 +1780,21 @@ if(!hasUpgrade('sp',21)) return n(1)
 return eff
     },
     drEff3() {
+    if(inChallenge('ri',21))return n(1)
   dr=player.a.dr.max(1)
 eff=dr.add(1).log(10).add(1).pow(0.4).sub(1).div(10).add(1)
 if(!hasUpgrade('sp',22)) return n(1)
 return eff
     },
     drEff4() {
+    if(inChallenge('ri',21))return n(1)
   dr=player.a.dr.max(1)
 eff=dr.add(1).log(15).add(1).pow(0.4).sub(1).div(10).add(1)
 if(!hasUpgrade('sp',25)) return n(1)
 return eff
     },
     drEff5() {
+    if(inChallenge('ri',21))return n(1)
   dr=player.a.dr.max(1)
 eff=dr.add(1).log(18).add(1).pow(0.4).sub(1).div(10).add(1)
 if(!hasUpgrade('sp',27)) return n(1)
@@ -2500,6 +2527,7 @@ addLayer("p", {
     type: "normal", 
     exponent: 0.05, 
     effect(){
+        if(inChallenge('ri',21))return n(1)
         if(!hasUpgrade('p',11)){return player['p'].points.add(1).pow(player.m.points.add(1).pow(0.5))}
       if(hasUpgrade('p',11)&&!hasUpgrade('p',31)){return player['p'].points.add(1).pow(5).pow(player.m.points.add(1).pow(0.5))}
       if(hasUpgrade('p',31)){return player['p'].points.add(1).pow(8).pow(player.m.points.add(1).pow(0.5))}
@@ -3204,6 +3232,7 @@ addLayer("c", {
         if (gcs("r",32)==1) mult = mult.times(clickableEffect("r", 32))}
         if(gcs("r",103)==1) mult = mult.times(clickableEffect("r", 103))
         if(n(gba('sp',24)).gt(0)) mult=mult.times(buyableEffect('sp',24))
+        if(hasMilestone('dx',4)) mult=mult.mul(1e50)
         return mult
     },
     powerCal(){
@@ -3393,7 +3422,7 @@ addLayer("c", {
 			11: {
 				title: "音乐世界",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(2).pow(1.5))
     return cost
          },
@@ -3417,7 +3446,7 @@ addLayer("c", {
      buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(1.5).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3426,7 +3455,7 @@ addLayer("c", {
 			12: {
 				title: "音乐星球",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(2).pow(1.6))
     return cost
          },
@@ -3447,7 +3476,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(1.6).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3456,7 +3485,7 @@ addLayer("c", {
 			13: {
 				title: "音乐恒星",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(2).pow(1.5))
     return cost
          },
@@ -3477,7 +3506,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(1.5).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3486,7 +3515,7 @@ addLayer("c", {
 			14: {
 				title: "音乐星云",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(1.6).pow(1.5))
     return cost
          },
@@ -3511,7 +3540,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(1.5).div(1.6)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3520,7 +3549,7 @@ addLayer("c", {
 			21: {
 				title: "音乐星团",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.8, x.mul(1.8).pow(1.8))
     return cost
          },
@@ -3541,7 +3570,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.8).root(1.8).div(1.8)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3550,7 +3579,7 @@ addLayer("c", {
 			22: {
 				title: "音乐星系",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(1.5).pow(2))
     return cost
          },
@@ -3571,7 +3600,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(2).div(1.5)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3580,7 +3609,7 @@ addLayer("c", {
 			23: {
 				title: "音乐系群",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.5, x.add(-1).mul(1.6).pow(2))
     return cost
          },
@@ -3600,7 +3629,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.5).root(2).div(1.6).sub(1)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3609,7 +3638,7 @@ addLayer("c", {
 			24: {
 				title: "音乐宇宙",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.5, x.mul(2).pow(2))
     return cost
          },
@@ -3629,7 +3658,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.5).root(2).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3638,7 +3667,7 @@ addLayer("c", {
 			31: {
 				title: "音乐次元",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(2, x.mul(2).pow(2))
     return cost
          },
@@ -3658,7 +3687,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(2).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3668,7 +3697,7 @@ addLayer("c", {
 			32: {
 				title: "音乐维度",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.8, x.mul(2).pow(2))
     return cost
          },
@@ -3688,7 +3717,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.8).root(2).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3698,7 +3727,7 @@ addLayer("c", {
 			33: {
 				title: "音乐空间",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.6, x.mul(2).pow(2.5))
     return cost
          },
@@ -3718,7 +3747,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.6).root(2.5).div(2)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3728,7 +3757,7 @@ addLayer("c", {
 			34: {
 				title: "音乐领域",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(2).div(25)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?1.85:2).div(hasUpgrade('dx',15)?25**0.85:25)
      let cost = Decimal.pow(1.75, x.mul(2.25).pow(2.25))
     return cost
          },
@@ -3748,7 +3777,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.75).root(2.25).div(2.25)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(25).sqrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**0.85:25).root(hasUpgrade('dx',15)?1.85:2);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3758,7 +3787,7 @@ addLayer("c", {
 			41: {
 				title: "音乐无限",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(3).div(625)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?2.7:3).div(hasUpgrade('dx',15)?25**1.7:625)
      let cost = Decimal.pow(1.8, x.mul(2.4).pow(2))
     return cost
          },
@@ -3778,7 +3807,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.8).root(2).div(2.4)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(625).cbrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**1.7:625).root(hasUpgrade('dx',15)?2.7:3);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3788,7 +3817,7 @@ addLayer("c", {
 	    42: {
 				title: "音乐永恒",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(3).div(625)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?2.7:3).div(hasUpgrade('dx',15)?25**1.7:625)
      let cost = Decimal.pow(1.5, x.mul(2.5).pow(2.5))
     return cost
          },
@@ -3808,7 +3837,7 @@ addLayer("c", {
          buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(1.5).root(2.5).div(2.5)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(625).cbrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**1.7:625).root(hasUpgrade('dx',15)?2.7:3);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3818,7 +3847,7 @@ addLayer("c", {
 			43: {
 				title: "音乐量子",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(3).div(625)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?2.7:3).div(hasUpgrade('dx',15)?25**1.7:625)
      let cost = Decimal.pow(2, x.mul(2.5).pow(2.5))
     return cost
          },
@@ -3838,7 +3867,7 @@ addLayer("c", {
   buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2).root(2.5).div(2.5)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(625).cbrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**1.7:625).root(hasUpgrade('dx',15)?2.7:3);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -3848,7 +3877,7 @@ addLayer("c", {
 			44: {
 				title: "音乐现实",
 				cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-     if (x.gte(25)) x = x.pow(3).div(625)
+     if (x.gte(25)) x = x.pow(hasUpgrade('dx',15)?2.7:3).div(hasUpgrade('dx',15)?25**1.7:625)
      let cost = Decimal.pow(2.5, x.mul(2.5).pow(2.5))
     return cost
          },
@@ -3868,7 +3897,7 @@ addLayer("c", {
        buyMax() {
 					if (!this.canAfford()) return;
 					let tempBuy = player.c.power.max(1).log(2.5).root(2).div(2.5)
-					if (tempBuy.gte(25)) tempBuy = tempBuy.times(625).cbrt();
+					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**1.7:625).root(hasUpgrade('dx',15)?2.7:3);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
 				},
@@ -4762,6 +4791,8 @@ points: n(0),
     gainExp() { //spgainexp
       exp= n(0.0001)
       if(buyableEffect('c',41)>1) exp = exp.times(buyableEffect('c',41))
+      if(hasMilestone('dx',3)) exp = exp.mul(1.03)
+      if(hasChallenge('ri',21))exp=exp.mul(challengeEffect('ri',21))
       if(hasChallenge('r',11)) exp=exp.div(challengeEffect('r',11))
        return exp
     },
