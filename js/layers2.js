@@ -69,11 +69,13 @@ chalBox: {
     gainExp() { //rgainexp
    exp= n(1)
    if(inChallenge('ri',11)) exp=exp.mul(0.5)
+   if(player.dx.activeChallenge)exp=exp.mul(0.1)
     return exp
     },
     directMult() { //rdirectmult
      mult = n(1)
      if(n(gba('sp',25)).gt(0)) mult=mult.times(buyableEffect('sp',25))
+   if(player.dx.activeChallenge)mult=mult.pow(0.1)
      return mult
     },
     passiveGeneration() {return n(0)},
@@ -1615,7 +1617,10 @@ doReset(resettingLayer) {
     description:"全局速率以降低的倍率增益Milthm维度",
     cost: n(1e15),
     tooltip:"说真的，我和你们一样讨厌时间墙",
-    effect() {return n(2).pow(player.devSpeed.max(1).log(10).pow(0.5)).max(1)},
+    effect() {
+        let eff=n(2).pow(player.devSpeed.max(1).log(10).pow(0.5)).max(1)
+        if(hasUpgrade('dx',22))eff=eff.max(player.devSpeed.cbrt())
+        return eff},
     effectDisplay() { return "×"+format(upgradeEffect(this.layer, this.id))},
     unlocked() {return hasMilestone('mi',2)}, },
     12:{ title: "序章—雨的声音",
@@ -2227,6 +2232,9 @@ clickables: {[11]: 0},
       ["display-text",
       function() {if(hasMilestone('e',3)) return '9.Dot获取指数+' + format(tmp.j.pdqja9,3)},
      {"color": "#ffffff", "font-size": "20px", "font-family": "Comic Sans MS"}],
+      ["display-text",
+      function() {if(hasUpgrade('j',41)) return '10.maiMILE×' + format(tmp.j.pdqja10,3)},
+     {"color": "#ffffff", "font-size": "20px", "font-family": "Comic Sans MS"}],
      "upgrades",
      ],
      unlocked() {return hasMilestone('j',0)}
@@ -2354,13 +2362,19 @@ pdqja9() {
  if(!hasMilestone('e',3)) b=n(0)
  return b.max(0)
 },
+pdqja10() {
+ let a=player.j.pdqjr.min(240)
+ let b=n(2).pow(n(240).sub(a).pow(0.75))
+ if(!hasUpgrade('j',41)) b=n(1)
+ return b.max(1)
+},
 update(diff) {
 if(gcs('j',11)==0) {
 player.j.pdqj00=player.j.pdqj
 player.j.theme=options.theme
 }
 player.j.pdqj0=player.j.pdqj00.add(tmp.e.effect[0])
-if(gcs('j',11)==1&&!inChallenge('ri',11)) {player.j.time=player.j.time.add(n(diff).div(player.devSpeed.max(1)))}
+if(gcs('j',11)==1&&!inChallenge('ri',11)&&!player.dx.activeChallenge) {player.j.time=player.j.time.add(n(diff).div(player.devSpeed.max(1)))}
 
 if(player.j.time.gte(1000)) layers.j.clickables[11].onClick()
 player.j.pdqjr=tmp.j.pdqjr
@@ -2445,6 +2459,12 @@ doReset(resettingLayer) {
     unlocked() {return hasMilestone('j',9)},
     done() { return player.j.pdqja.lte(200)},
    },
+   11: {
+    requirementDescription: "通过160ms判定区间挑战",
+    effectDescription: "解锁一行判定区间升级",
+    unlocked() {return hasMilestone('j',10)},
+    done() { return player.j.pdqja.lte(160)},
+   },
    },
    clickables:{    
     11: {
@@ -2461,10 +2481,11 @@ doReset(resettingLayer) {
    if(player.points.gte("1e3000000")) {return "完成判定区间挑战！"} 
    else {
     if(inChallenge('ri',11)) return "RiC1中不能退出判定区间挑战！"
+    else if(player.dx.activeChallenge)return "KALEIDXSCOPE中不能退出判定区间挑战！"
     else return "退出判定区间挑战！"}
    }
      },
-     canClick() {return !inChallenge('ri',11)},
+     canClick() {return !inChallenge('ri',11)&&!player.dx.activeChallenge},
      onClick() {
    player.j.time=n(0)
    if (gcs('j',11)==0) {
@@ -2669,6 +2690,43 @@ doReset(resettingLayer) {
      return eff
     }
   },
+    41:{ 
+    fullDisplay() {return "ReMiRiA<br>最佳判定区间可以增益maiMILE获取量<br>需求：通过160ms判定区间挑战"},
+    unlocked() {return hasMilestone('j',11)},
+    tooltip:"这一行是舞萌、中二街机大神",
+    canAfford() {return player.j.pdqja.lte(160)},
+  },
+    42:{ 
+    fullDisplay() {return "よしき<br><br>需求：通过150ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',41)},
+    canAfford() {return player.j.pdqja.lte(150)},
+  },
+    43:{ 
+    fullDisplay() {return "<br><br>需求：通过140ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',42)},
+    canAfford() {return player.j.pdqja.lte(140)},
+  },
+    44:{ 
+    fullDisplay() {return "<br><br>需求：通过130ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',43)},
+    canAfford() {return player.j.pdqja.lte(130)},
+  },
+    45:{ 
+    fullDisplay() {return "<br><br>需求：通过120ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',44)},
+    canAfford() {return player.j.pdqja.lte(120)},
+  },
+    46:{ 
+    fullDisplay() {return "<br><br>需求：通过110ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',45)},
+    canAfford() {return player.j.pdqja.lte(110)},
+  },
+    47:{ 
+    fullDisplay() {return "<br><br>需求：通过100ms判定区间挑战"},
+    unlocked() {return hasUpgrade('j',46)},
+    tooltip:"这就是终点了",
+    canAfford() {return player.j.pdqja.lte(100)},
+  },
    }
 })//Judgment
 
@@ -2726,6 +2784,7 @@ colBox: {
      if(hasUpgrade('ri',24)) mult=mult.mul(2)
      if(hasMilestone('j',8)) mult=mult.mul(4)
      mult=mult.mul(tmp.e.effect[1])
+     if(hasAchievement('A',124))mult=mult.mul(player.ri.points.add(10).log10().root(2))
      return mult
     },
     softcap:n(1e41),
@@ -2804,6 +2863,7 @@ colBox: {
     },
     mai1() {
      let a=n(2).pow(gba('ri',16).pow(1.5))
+     if(a.gte(100))a=a.div(100).pow(0.25).mul(100)
      return a
     },
     ric1() {
@@ -3369,7 +3429,8 @@ unlocked(){return hasUpgrade('ri',17)}
 				title: "maimai DX联动",
 				cost(x=player[this.layer].buyables[this.id]) {
 				 let cost=n(5e45).mul(n(2).pow(x))
-				 if(x==3) cost=n(2e308)
+                 if(x>=3)cost=n(1e49).mul(n(10).pow(x))
+				 if(x==5||(x==3&&!hasUpgrade('dx',24))) cost=n(2e308)
     return cost
       },
 				display() { // Everything else displayed in the buyable button after the title
@@ -3383,6 +3444,8 @@ unlocked(){return hasUpgrade('ri',17)}
     if(x==1) eff=3
     if(x==2) eff=5
     if(x==3) eff=7
+    if(x==4) eff=10
+    if(x==5) eff=13
     return eff
    },
    canAfford() {
@@ -3390,12 +3453,13 @@ unlocked(){return hasUpgrade('ri',17)}
     buy() { 
     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
       },
-     purchaseLimit() {return n(3)},
+     purchaseLimit() {if(hasUpgrade('dx',24))return n(5);return n(3)},
      style: {'height':'150px'},
 			},
  21: {
 				title: "曲库生成器",
 				cost(x=player[this.layer].buyables[this.id]) {
+				 if(x.eq(30)) x=n("eee1000")
 				 if(x.gte(20)) x=x.sub(19).pow(x.sub(18).pow(0.5)).add(19)
 				 let cost=n(1e38).mul(n(2).pow(x))
 				 if(x==100) cost=n(2e308)
@@ -3421,6 +3485,7 @@ unlocked(){return hasUpgrade('ri',17)}
  22: {
 				title: "曲库延拓器",
 				cost(x=player[this.layer].buyables[this.id]) {
+				 if(x.eq(30)) x=n("eee1000")
 				 if(x.gte(20)) x=x.sub(19).pow(x.sub(18)).add(19)
 				 if(x.gte(5)) x=x.div(5).pow(3).mul(5)
 				 if(x.gte(40)) x=x.sub(39).pow(2).add(39)
@@ -3520,10 +3585,10 @@ unlocked(){return hasUpgrade('ri',17)}
    return "全局速率锁定为0.1，你无法获取旋律，蛇、龙、Phidata没有效果，Note获取指数^0.65<br>完成次数:"+challengeCompletions(this.layer,this.id)+"/5"},
    req() {let a=challengeCompletions('ri',21)
     if(a==0) return n("1e24900")
-    if(a==1) return n(1e309)
-    if(a==2) return n(1)
-    if(a==3) return n(1)
-    if(a==4) return n(1)
+    if(a==1) return n("1e26400")
+    if(a==2) return n("1e27300")
+    if(a==3) return n("1e28150")
+    if(a==4) return n("1e29850")
     return n(2e308)
    },
      goalDescription(){return format(this.req())+" Notes"},
@@ -3633,14 +3698,14 @@ asBox: {
      if(hasMilestone('e',7)) player.e.bestOnce=tmp.e.getResetGain.max(player.e.bestOnce)
      if(hasMilestone('e',8)) {
       for(i=11;i<=17;i++) {
-      if(tmp.e.clickables[i].unlocked&&player.e.assigned[i-11].lt(3e6)) player.e.assigned[i-11]=player.e.assigned[i-11].add(exp)
+      if(tmp.e.clickables[i].unlocked&&player.e.assigned[i-11].lt(hasUpgrade('dx',23)?1e7:3e6)) player.e.assigned[i-11]=player.e.assigned[i-11].add(exp)
       }
      }
      player.e.points=player.e.points.min(hasMilestone('dx',0)?3e5:2.5e5)
      if(!hasUpgrade('dx',13))player.ri.points=player.ri.points.min(2.5e46)
      if(!hasUpgrade('dx',13))player.ri.total=player.ri.total.min(2.5e46)
       for(i=0;i<=6;i++) {
-      if(player.e.assigned[i].gte(3e6)) player.e.assigned[i]=n(3e6)
+      if(player.e.assigned[i].gte(hasUpgrade('dx',23)?1e7:3e6)) player.e.assigned[i]=n(hasUpgrade('dx',23)?1e7:3e6)
       }
     },
     hotkeys: [
@@ -4132,6 +4197,8 @@ addLayer("dx", {
         rating:n(0),
         ratmax:n(1000),
         ratmax2:n(1),
+        bestNote:{11:n(0),12:n(0),21:n(0),22:n(0),31:n(0),32:n(0),41:n(0),42:n(0),51:n(0)},
+        theme:'default',
     }},
     branches(){return ['r','mi','j']},
      color: "#dede00",
@@ -4153,6 +4220,8 @@ addLayer("dx", {
     //sgainmult//
         mult = n(1)
      mult=mult.mul(tmp.ri.mai1)
+     if(hasUpgrade('dx',17))mult=mult.mul(upgradeEffect('dx',17))
+   mult=mult.mul(tmp.j.pdqja10)
         return mult
     },
     gainExp() { //sgainexp
@@ -4211,12 +4280,12 @@ unlocked(){return hasUpgrade('dx',14)},
    "main-display","challenges",
 
 ],
-unlocked(){return false},
+unlocked(){return hasUpgrade('dx',26)},
     },},
   softcap:n ("ee999999"),
   softcapPower:n(1),
     update(diff) {
-     
+        if(player.dx.activeChallenge)player.dx.bestNote[player.dx.activeChallenge]=player.dx.bestNote[player.dx.activeChallenge].max(player.points)
 	},
       milestones: {
     0: {
@@ -4248,6 +4317,16 @@ unlocked(){return false},
      requirementDescription: "通过168ms判定区间挑战",
      effectDescription: "基于DX Rating和超过2000的Rot点数指数提升Notes获取，最高^1.2",
      done() { return player.j.pdqja.lte(168) }
+    },
+    6: {
+     requirementDescription: "DX Rating达到4600",
+     effectDescription: "Phigros挑战IN的效果翻倍",
+     done() { return player.dx.rating.gte(4600) }
+    },
+    7: {
+     requirementDescription: "DX Rating达到5000",
+     effectDescription: "物量×1.05，第9个Cytus可购买以指数增益软上限前Lanota升级13、16、17的效果",
+     done() { return player.dx.rating.gte(5000) }
     },
 },
       upgrades: {
@@ -4286,15 +4365,81 @@ unlocked(){return false},
          tooltip:"<s>别问我为什么不是maimai挑战，问就是还早着呢</s>",
          cost: n(20000),
      unlocked(){return hasUpgrade('dx',15)},},
-    17:{ title: "",
-         description: "",
-         tooltip:"还没做呢",
-         cost: n(1e309),
+    17:{ title: "噔→噔↓噔↑噔↓噔→~",
+         description: "解锁第三个DX Rating可点击，基于DX Rating提升maiMILE获取",
+         effect() { 
+             let eff=player.dx.rating.add(1).pow(0.4)
+             return eff
+         },
+         cost: n(25000),
+     effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"×" },
      unlocked(){return challengeCompletions('ri',21)>=1},},
+    21:{ title: "でらっくmaimai♪てんてこまい!",
+         description: "第三行曲包升级的效果平方",
+         cost: n(300000),
+     unlocked(){return challengeCompletions('ri',21)>=2},},
+    22:{ title: "ぼくたちいつでも　しゅわっしゅわ！",
+         description: "课题力量的效果更好，Milthm升级11的效果更好",
+         cost: n(1000000),
+     unlocked(){return challengeCompletions('ri',21)>=3},},
+    23:{ title: "とびだせ! TO THE COSMIC!!",
+         description: "所有经验分配项的硬上限延后3.33倍",
+         cost: n(2000000),
+     unlocked(){return challengeCompletions('ri',21)>=4},},
+    24:{ title: "ホシシズク",
+         description: "maimai DX联动的上限+2",
+         cost: n(1e7),
+     unlocked(){return challengeCompletions('ri',21)>=5},},
+    25:{ title: "NOIZY BOUNCE",
+         description: "削弱蛇的第二个效果的第三重软上限",
+         tooltip:"这一排的升级名是DX代主题曲",
+         cost: n(1e8),
+     unlocked(){return hasUpgrade('dx',24)},},
+    26:{ title: "プリズム△▽リズム",
+         description: "开启KALEIDXSCOPE，Cyten获取指数×1.025",
+         cost: n(2e8),
+     unlocked(){return hasUpgrade('dx',25)},},
 },
     buyables: {
 },
     challenges: {
+     11: {
+     name: "KALEIDXSCOPE -青春区域-",
+     challengeDescription(){
+   return "本挑战没有额外效果。<br>本区域的完美挑战曲是：果ての空、僕らが見た光。MASTER 13+<br>你最高在挑战中获取了"+format(player.dx.bestNote[11])+" Notes<br>达成率:"+format(this.successRate().mul(100),4)+"%"},
+   req() {return n(2e308)
+   },
+     goalDescription(){
+      return "101.0000%"
+     },
+     rewardDescription(){
+      return "暂无"
+     },
+     rewardEffect() {
+      let eff=n(1)
+       return eff
+     },
+     successRate(){
+         let a=n(0)
+         return a.min(1.01)
+     },
+     onEnter() {
+      player.dx.theme=options.theme
+      player.j.pdqj0=n(50)
+      player.j.pdqj00=n(50)
+      layers.j.clickables[11].onClick()
+     },
+     onExit() {
+      options.theme=player.dx.theme
+      changeTheme()
+
+     },
+     unlocked(){return true},
+     completionLimit(){
+   return n(1)},
+     canComplete: function() {
+   return this.successRate().gte(1.01)},
+     },
 },
   clickables: {
     11: {
@@ -4325,13 +4470,13 @@ unlocked(){return false},
       unlocked() {return true}
     },
     13: {
-      title() {return "增加PTT上限2"},
-      display() {return "增加上一个可点击效果的上限（基于Phidata数量）<br>上限×"+format(n(1).div(player.a.pttMax2))+"<br>确切来说，×"+n(1).div(player.a.pttMax2)},
+      title() {return "增加DX Rating上限2"},
+      display() {return "基于一次获得的最佳经验数增加上一个可点击效果的上限<br>上限×"+format(n(1).div(player.dx.ratmax2))+"<br>确切来说，×"+n(1).div(player.dx.ratmax2)},
       canClick() {return true},
-      onClick() {player.a.pttMax2 = player.a.pttMax2.sub(player.p.points.add(1).log(100).add(1).div(5).pow(0.5).mul(player.a.pttMax2.pow(10)).max(player.a.pttMax2.div(100)).sub(player.a.pttMax2.div(100)).min(player.a.pttMax2.mul(0.1)))},
+      onClick() {player.dx.ratmax2 = player.dx.ratmax2.sub(player.e.bestOnce.add(1).log(2).add(1).div(2).pow(0.5).mul(player.dx.ratmax2.pow(10)).max(player.dx.ratmax2.div(100)).sub(player.dx.ratmax2.div(100)).min(player.dx.ratmax2.mul(0.1))).min(player.dx.ratmax2)},
       onHold() {
        this.onClick()},
-      unlocked() {return false}
+      unlocked() {return hasUpgrade('dx',17)}
     },
     },
 })//maimai DX

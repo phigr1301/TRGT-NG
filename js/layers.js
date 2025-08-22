@@ -460,6 +460,27 @@ QqQ="QqQe308";banana="3.8642180e38642180";Liu="6.666666666666666666666666e308";f
    tooltip:"DX Rating达到2000！",
    textStyle: {'color': '#7fff7f'},
    },
+  123: {
+   name: "黄框",
+   done() {return player.dx.rating.gte(4000)},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"DX Rating达到4000！",
+   textStyle: {'color': '#ffff7f'},
+   },
+  124: {
+   name: "曲库充盈<br>🏆",
+   done() {return player.s.points.gte("e5e6")},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"获得1e5000000（e5e6）歌曲<br>奖励：Dot提升Dot获取",
+   textStyle: {'color': '#01e5e6'},
+   },
+  125: {
+   name: "一瞬千年",
+   done() {return player.devSpeed.gte("1e9")},
+   onComplete(){player.A.ach=player.A.ach.add(1)},
+   tooltip:"使游戏速度达到1e9倍",
+   textStyle: {'color': '#1000ee'},
+   },
        
        1001: {
      name: "隐藏成就1",
@@ -1721,7 +1742,8 @@ eff=n(1e4).pow(sn.pow(0.5))
 if(tmp.a.drEff2.gte(1)) eff=eff.pow(tmp.a.drEff2)
 if(eff.log10().gte(1000)) eff = n(10).pow(eff.log10().sub(1000).pow(0.8).add(1000))//sc
 if(eff.log10().gte(5000)) eff = n(10).pow(eff.log10().sub(5000).pow(0.5).add(5000))//sc2
-if(eff.log10().gte(150000)) eff = n(10).pow(eff.log10().sub(150000).pow(0.1).add(150000))//sc3
+if(eff.log10().gte(150000)) eff = n(10).pow(eff.log10().sub(150000).pow(hasUpgrade('dx',25)?0.5:0.1).add(150000))//sc3
+if(eff.log10().gte(500000)) eff = n(10).pow(eff.log10().sub(500000).pow(0.2).add(500000))//sc4
 if(!hasAchievement('A',74)) return n(1)
 return eff},
     snEff3() {
@@ -2378,13 +2400,15 @@ addLayer("l", {
     effect() {
      let a=n(2)
      if(gba('ri',12).gte(3)) a=tmp.ri.la2
-     return a.pow(player.a.ptt.div(3).add(1))},
+     let eff=a.pow(player.a.ptt.div(3).add(1))
+    if(hasMilestone('dx',7)) eff = eff.pow(buyableEffect('c',31))
+ return eff},
     effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"×"},
     cost: n(15),
     unlocked() {return hasUpgrade('p',22)}, },
     14:{ title: "潜能无限 II",
     description() {return "让RKS也生效于“潜能无限”的效果（基于RKS指数提升Notes）"},
-    effect() {return player.p.rks.add(9).log(10).min(1.1)},
+    effect() {return player.p.rks.add(9).log(10).max(1).min(1.1)},
     effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id),4)},
     cost: n(25),
     unlocked() {return hasUpgrade('p',37)}, },
@@ -2394,14 +2418,24 @@ addLayer("l", {
     unlocked() {return hasUpgrade('p',37)}, },
     16:{ title: "诗笺之理",
     description() {return "基于诗篇提升Notes"},
-    effect() {return player.l.points.max(1).pow(player.l.points.max(1)).pow(10).min('1e5000')
+    effect() {let eff= player.l.points.max(1).pow(player.l.points.max(1)).pow(10)
+    if(hasMilestone('dx',7)) eff = eff.pow(buyableEffect('c',31))
+        if(!hasMilestone('sp',5))eff=eff.min('1e5000')
+        if(eff.gte('1e5000'))eff=n(10).pow(eff.log10().div(5000).pow(0.25).mul(5000))
+        if(eff.gte('ee6'))eff=n(10).pow(eff.log10().sub(1e6).pow(0.25).add(1e6))
+        return eff
     },
     effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"×"},
     cost: n(110),
     unlocked() {return hasChallenge('c',11)&&hasUpgrade('a',43)}, },
     17:{ title: "空笺之理",
     description() {return "基于魔王曲提升Notes<br>升级谐音反物质维度：时间之理、空间之理"},
-    effect() {return player.m.points.add(1).pow(player.m.points.mul(3).max(100)).pow(4).min('1e1200') },
+    effect() {let eff= player.m.points.add(1).pow(player.m.points.mul(3).max(100)).pow(4)
+    if(hasMilestone('dx',7)) eff = eff.pow(buyableEffect('c',31))
+        if(!hasMilestone('sp',6))eff=eff.min('1e1200')
+        if(eff.gte('e3e4'))eff=n(10).pow(eff.log10().div(30000).pow(0.25).mul(30000))
+        if(eff.gte('ee6'))eff=n(10).pow(eff.log10().sub(1e6).pow(0.25).add(1e6))
+        return eff},
     effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"×"},
     cost: n(129),
     unlocked() {return hasUpgrade('s',35)}, },
@@ -2580,6 +2614,7 @@ addLayer("p", {
         mult = n(1)
         if(gcs("r",72)==1) mult = mult.times(clickableEffect("r", 72))
         if(hasUpgrade('sp',36)) mult=mult.times(100)
+        if(hasUpgrade('dx',21)) mult=mult.times(100)
         if(gcs("r",102)==1) mult = mult.times(clickableEffect("r", 102))
         if(n(gba('sp',23)).gt(0)) mult=mult.times(buyableEffect('sp',23))
         mult=mult.times(tmp.ri.phi3)
@@ -2683,7 +2718,7 @@ addLayer("p", {
    if(hasUpgrade('p',21)){return "歌曲和源点层级被禁用，歌曲和源点^0.1，Note×1e-55<br>完成次数:"+challengeCompletions(this.layer,this.id)+"/5"}},
         goalDescription(){return "1e"+n(200).add(n(challengeCompletions(this.layer,this.id)).mul(100))+" Notes"},
         rewardDescription(){return "根据挑战完成次数指数提升Notes<br>效果：^"+challengeEffect(this.layer,this.id).mul(100).round().div(100)},
-        rewardEffect() {return n( challengeCompletions(this.layer,this.id)).add(1).pow(0.2).div(5.2).add(0.8077)},
+        rewardEffect() {return n( challengeCompletions(this.layer,this.id)*(hasMilestone('dx',6)?2:1)).add(1).pow(0.2).div(5.2).add(0.8077)},
         unlocked(){unlock= false
         if(hasMilestone('p',6)) unlock=true
    return unlock },
@@ -3223,6 +3258,7 @@ addLayer("c", {
       if(hasUpgrade('ch',32))exp= exp.div(upgradeEffect('ch',32))
       if(hasChallenge('c',14))exp= exp.times(1.1)
       if(buyableEffect('c',42)>1) exp = exp.times(buyableEffect('c',42))
+      if(hasUpgrade('dx',26))exp= exp.times(1.025)
       return exp
     },
     directMult() { //cdirectmult
@@ -3896,7 +3932,7 @@ addLayer("c", {
          },
        buyMax() {
 					if (!this.canAfford()) return;
-					let tempBuy = player.c.power.max(1).log(2.5).root(2).div(2.5)
+					let tempBuy = player.c.power.max(1).log(2.5).root(2.5).div(2.5)
 					if (tempBuy.gte(25)) tempBuy = tempBuy.times(hasUpgrade('dx',15)?25**1.7:625).root(hasUpgrade('dx',15)?2.7:3);
 					let target = tempBuy.plus(1).floor();
 					player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].max(target);
@@ -4074,6 +4110,7 @@ addLayer("ch", {
     if(hasUpgrade('ch',16)) mult=mult.times(upgradeEffect('ch',16))
     if(hasUpgrade('ch',31)) mult=mult.times(upgradeEffect('ch',31))
     if(hasUpgrade('ch',33)) mult=mult.times(1.1)
+    if(hasMilestone('dx',7)) mult=mult.times(1.05)
     if(buyableEffect('c',31)>1) exp = exp.times(buyableEffect('c',31))
       return mult.min(n(4000).add(clickableEffect('e',16)))
     },
@@ -4156,6 +4193,7 @@ addLayer("ch", {
       eff=enp.pow(2)
       if(hasUpgrade('ch',54)) eff=enp.pow(3)
       if(hasUpgrade('j',16)) eff=eff.pow(1.5)
+      if(hasUpgrade('dx',22))eff=eff.pow(1.5)
       return eff.max(1)
 },
     row: 3, 
@@ -4924,6 +4962,18 @@ milestones: {
         effectDescription: "解锁曲包，解锁Arcaea曲包（基于源点获得），源点指数乘以1.03",
         done() { return player.sp.points.gte(8) }
     },
+    5: {
+        requirementDescription: "获得355,555个曲包",
+        effectDescription: "Lanota升级16不再有上限，但效果被严重软上限",
+        done() { return player.sp.points.gte(355555) },
+        unlocked(){return player.dx.unlocked}
+    },
+    6: {
+        requirementDescription: "获得366,666个曲包",
+        effectDescription: "Lanota升级17不再有上限，但效果被严重软上限",
+        done() { return player.sp.points.gte(366666) },
+        unlocked(){return player.dx.unlocked}
+    },
 },
 buyables:{
  11: {
@@ -5336,6 +5386,7 @@ onPurchase() {setBuyableAmount('sp',12,gba('sp',12).sub(25))
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(2))},
   canAfford() {return gba('sp',13).gte(2)},
   effect() { eff= player.p.points.max(1).log(10).pow(2).max(1).log(10).div(3)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
   },
@@ -5345,6 +5396,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(2))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(6))},
   canAfford() {return gba('sp',13).gte(6)},
   effect() { eff= gba('sp',11).max(1).pow(5).max(1).log(10).div(5)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
   },
@@ -5354,6 +5406,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(6))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(8))},
   canAfford() {return gba('sp',13).gte(8)},
   effect() { eff= gba('sp',12).max(1).pow(5).max(1).log(10).div(4)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
   },
@@ -5363,6 +5416,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(8))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(10))},
  canAfford() {return gba('sp',13).gte(10)},
   effect() { eff= gba('sp',13).max(1).pow(3).max(1).log(3).div(3)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
   },
@@ -5372,6 +5426,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(10))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(12))},
  canAfford() {return gba('sp',13).gte(12)},
   effect() { eff= player.r.total.max(1).pow(2).max(1).log(15).div(3)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
   },
@@ -5381,6 +5436,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(12))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(17))},
  canAfford() {return gba('sp',13).gte(17)},
   effect() { eff= player.c.power.max(1).pow(0.15).max(1).log(10).pow(0.15)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
 },
@@ -5390,6 +5446,7 @@ onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(17))},
 onPurchase() {setBuyableAmount('sp',13,gba('sp',13).sub(18))},
  canAfford() {return gba('sp',13).gte(18)},
   effect() { eff= player.r.rota.max(1).pow(5).max(1).log(3).pow(0.3)
+      if(hasUpgrade('dx',21))eff=eff.pow(2)
         return eff.max(1)
       },
 },
